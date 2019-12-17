@@ -1,1 +1,2 @@
+#[allow(deprecated)]
 mod abc;
