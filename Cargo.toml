@@ -2,7 +2,7 @@
 name = "competitive-programming"
 version = "0.1.0"
 authors = ["kuwata0037 <kuwata0037@gmail.com>"]
-edition = "2015"
+edition = "2018"
 publish = false
 
 [dependencies]
