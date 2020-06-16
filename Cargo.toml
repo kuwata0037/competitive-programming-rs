@@ -6,3 +6,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
+num = "0.2.1"
+regex = "1.3.6"
+permutohedron = "0.2.4"
+proconio = { version = "0.3.6", features = ["derive"] }
