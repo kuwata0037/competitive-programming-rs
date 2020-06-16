@@ -2,7 +2,11 @@
 name = "competitive-programming"
 version = "0.1.0"
 authors = ["kuwata0037 <kuwata0037@gmail.com>"]
-edition = "2015"
+edition = "2018"
 publish = false
 
 [dependencies]
+num = "0.2.1"
+regex = "1.3.6"
+permutohedron = "0.2.4"
+proconio = { version = "0.3.6", features = ["derive"] }
