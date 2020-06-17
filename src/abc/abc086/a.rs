@@ -1,17 +1,17 @@
-use proconio::{input, source, source::once};
+use proconio::{input, source::auto};
 use std::io::BufRead;
 
 fn main() {
     let stdin = std::io::stdin();
-    println!("{}", solve(once::OnceSource::new(stdin.lock())));
+    println!("{}", solve(auto::AutoSource::new(stdin.lock())));
 }
 
 fn solve<T, R>(source: T) -> String
 where
-    T: source::Source<R>,
+    T: Into<auto::AutoSource<R>>,
     R: BufRead,
 {
-    input! {from source, a: u32, b: u32};
+    input! {from source.into(), a: u32, b: u32};
     if a * b % 2 == 0 {
         "Even".to_string()
     } else {
@@ -25,11 +25,11 @@ mod tests {
 
     #[test]
     fn case1() {
-        assert_eq!(solve(once::OnceSource::from("3 4")), "Even");
+        assert_eq!(solve("3 4"), "Even");
     }
 
     #[test]
     fn case2() {
-        assert_eq!(solve(once::OnceSource::from("1 21")), "Odd");
+        assert_eq!(solve("1 21"), "Odd");
     }
 }
