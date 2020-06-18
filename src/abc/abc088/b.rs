@@ -1,79 +1,28 @@
-macro_rules! input {
-    (source = $s:expr, $($r:tt)*) => {
-        let mut iter = $s.split_whitespace();
-        input_inner!{iter, $($r)*}
-    };
-    ($($r:tt)*) => {
-        let mut s = {
-            use std::io::Read;
-            let mut s = String::new();
-            std::io::stdin().read_to_string(&mut s).unwrap();
-            s
-        };
-        let mut iter = s.split_whitespace();
-        input_inner!{iter, $($r)*}
-    };
-}
+use proconio::{input, source::auto};
+use std::cmp::Reverse;
+use std::io::BufRead;
 
-macro_rules! input_inner {
-    ($iter:expr) => {};
-    ($iter:expr, ) => {};
-
-    ($iter:expr, $var:ident : $t:tt $($r:tt)*) => {
-        let $var = read_value!($iter, $t);
-        input_inner!{$iter $($r)*}
-    };
-}
-
-macro_rules! read_value {
-    ($iter:expr, ( $($t:tt),* )) => {
-        ( $(read_value!($iter, $t)),* )
-    };
-
-    ($iter:expr, [ $t:tt ; $len:expr ]) => {
-        (0..$len).map(|_| read_value!($iter, $t)).collect::<Vec<_>>()
-    };
-
-    ($iter:expr, chars) => {
-        read_value!($iter, String).chars().collect::<Vec<char>>()
-    };
-
-    ($iter:expr, usize1) => {
-        read_value!($iter, usize) - 1
-    };
-
-    ($iter:expr, $t:ty) => {
-        $iter.next().unwrap().parse::<$t>().expect("Parse error")
-    };
-}
-
-macro_rules! stdin {
-    () => {{
-        use std::io::Read;
-        let mut s = String::new();
-        std::io::stdin().read_to_string(&mut s).unwrap();
-        s
-    }};
-}
-
-#[allow(dead_code)]
 fn main() {
-    println!("{}", solve(&stdin!()));
+    let stdin = std::io::stdin();
+    println!("{}", solve(auto::AutoSource::new(stdin.lock())));
 }
 
-fn solve(src: &str) -> String {
-    input!(source = src, n: usize, a: [u32; n]);
-
-    let mut a: Vec<u32> = a;
-    a.sort();
-    a.reverse();
-    if a.len() % 2 != 0 {
-        a.push(0);
+fn solve<T, R>(source: T) -> u32
+where
+    T: Into<auto::AutoSource<R>>,
+    R: BufRead,
+{
+    input! {
+        from source.into(),
+        n: usize,
+        v: [u32; n],
     }
-    a.chunks(2)
-        .map(|item| item[0] - item[1])
-        .sum::<u32>()
-        .to_string()
+    let mut v: Vec<u32> = v;
+    if n % 2 != 0 {
+        v.push(0);
+    }
+    v.sort_by_key(|&key| Reverse(key));
+    v.chunks(2).map(|chunk| chunk[0] - chunk[1]).sum()
 }
 
 #[cfg(test)]
@@ -82,8 +31,16 @@ mod tests {
 
     #[test]
     fn case1() {
-        assert_eq!(solve("2\n3 1"), "2");
-        assert_eq!(solve("3\n2 7 4"), "5");
-        assert_eq!(solve("4\n20 18 2 18"), "18");
+        assert_eq!(solve("2 3 1"), 2);
+    }
+
+    #[test]
+    fn case2() {
+        assert_eq!(solve("3 2 7 4"), 5);
+    }
+
+    #[test]
+    fn case3() {
+        assert_eq!(solve("4 20 18 2 18"), 18);
     }
 }
