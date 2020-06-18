@@ -1,25 +1,35 @@
-macro_rules! stdin {
-    () => {{
-        use std::io::Read;
-        let mut s = String::new();
-        std::io::stdin().read_to_string(&mut s).unwrap();
-        s
-    }};
-}
+use proconio::{input, source::auto};
+use std::io::BufRead;
 
-#[allow(dead_code)]
 fn main() {
-    println!("{}", solve(&stdin!()));
+    let stdin = std::io::stdin();
+    println!("{}", solve(auto::AutoSource::new(stdin.lock())));
 }
 
-fn solve(src: &str) -> String {
-    let src = src.trim_right();
-    let src = src.split("eraser").collect::<String>();
-    let src = src.split("erase").collect::<String>();
-    let src = src.split("dreamer").collect::<String>();
-    let src = src.split("dream").collect::<String>();
-
-    if src.is_empty() { "YES" } else { "NO" }.to_string()
+fn solve<T, R>(source: T) -> String
+where
+    T: Into<auto::AutoSource<R>>,
+    R: BufRead,
+{
+    input! {
+        from source.into(),
+        s: String,
+    }
+    let s: String = s.chars().rev().collect();
+    let keywords: Vec<String> = ["eraser", "erase", "dreamer", "dream"]
+        .iter()
+        .map(|&keyword| keyword.chars().rev().collect())
+        .collect();
+    let mut slice = &s[..];
+    while !slice.is_empty() {
+        let keyword = keywords.iter().find(|&keyword| slice.starts_with(keyword));
+        if let Some(word) = keyword {
+            slice = &slice[word.len()..];
+        } else {
+            return "NO".to_string();
+        }
+    }
+    "YES".to_string()
 }
 
 #[cfg(test)]
@@ -29,7 +39,20 @@ mod tests {
     #[test]
     fn case1() {
         assert_eq!(solve("erasedream"), "YES");
+    }
+
+    #[test]
+    fn case2() {
         assert_eq!(solve("dreameraser"), "YES");
+    }
+
+    #[test]
+    fn case3() {
         assert_eq!(solve("dreamerer"), "NO");
+    }
+
+    #[test]
+    fn case4() {
+        assert_eq!(solve("dreaerasem"), "NO");
     }
 }
