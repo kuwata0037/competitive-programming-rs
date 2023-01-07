@@ -16,12 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          override: true
+      - uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
 
       - name: Run cargo build
         run: cargo build
@@ -29,34 +26,20 @@ jobs:
       - name: Run cargo test
         run: cargo test
 
-  fmt:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          components: rustfmt
-          override: true
-
-      - name: Check with rustfmt
-        run: cargo fmt --all -- --check
-
   lint:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
-          components: clippy
-          override: true
+          components: rustfmt, clippy
 
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check with rustfmt
+        run: cargo fmt --all -- --check
 
       - name: lint
         run: cargo clippy --all-targets --all-features -- --D warnings
